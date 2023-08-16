@@ -119,6 +119,8 @@ public:
      */
     void test();
 
+    void pwm_sweep();
+
     /**
      * Fast stop function (bypassing control loop)
      *
@@ -153,6 +155,7 @@ public:
     int32_t pwm_direction;        ///< Direction of PWM change for MPPT
     int32_t off_timestamp;        ///< Last time the DC/DC was switched off
     int32_t power_good_timestamp; ///< Last time the DC/DC reached above minimum output power
+    float duty_cycle = -1.0;
 
     // maximum allowed values
     float inductor_current_max = 0; ///< Maximum low-side (inductor) current
@@ -166,6 +169,8 @@ public:
                                ///< charging after low output power cut-off?
 
 private:
+    bool sweep_active = false;
+    float sweep_value;
     /**
      * MPPT perturb & observe control (buck mode)
      *

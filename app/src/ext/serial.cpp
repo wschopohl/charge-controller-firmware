@@ -152,7 +152,7 @@ void serial_thread()
         }
         else {
             // semaphore timed out (should happen exactly every 1 second)
-            t_start += 1000;
+            t_start += 500;
             serial_pub_msg();
         }
         task_wdt_feed(wdt_channel);

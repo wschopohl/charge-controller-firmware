@@ -69,6 +69,10 @@ bool pub_can_enable = IS_ENABLED(CONFIG_THINGSET_CAN_PUB_DEFAULT);
 uint16_t can_node_addr = CONFIG_THINGSET_CAN_DEFAULT_NODE_ID;
 #endif
 
+void pwm_sweep() {
+    dcdc.pwm_sweep();
+}
+
 /**
  * Thing Set Data Objects (see thingset.io for specification)
  */
@@ -198,6 +202,14 @@ static ThingSetDataObject data_objects[] = {
         }
     }*/
     TS_FN_VOID(0xE0, "xReset", &reset_device, ID_DEVICE, TS_ANY_RW),
+
+    /*{
+        "title": {
+            "en": "Start PWM Sweep",
+            "de": "Start PWM Sweep"
+        }
+    }*/
+    TS_FN_VOID(0xED, "xSweep", pwm_sweep, ID_DEVICE, TS_ANY_RW),
 
     /* 0xE2 reserved (previously used for bootloader-stm) */
 
@@ -454,6 +466,15 @@ static ThingSetDataObject data_objects[] = {
         }
     }*/
     TS_ITEM_UINT16(0x54, "rDCDCState", &dcdc.state,
+        ID_CHARGER, TS_ANY_R, SUBSET_SER | SUBSET_CAN),
+
+    /*{
+        "title": {
+            "en": "DC/DC frequency",
+            "de": "DC/DC-Frequenz"
+        }
+    }*/
+    TS_ITEM_FLOAT(0xBF, "rPWMfrequency", &dcdc.duty_cycle, 2,
         ID_CHARGER, TS_ANY_R, SUBSET_SER | SUBSET_CAN),
 
     /*{

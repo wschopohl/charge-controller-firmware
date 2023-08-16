@@ -221,6 +221,8 @@ bool Dcdc::startup_inhibit(bool reset)
 
 __weak void Dcdc::control()
 {
+    duty_cycle = half_bridge_get_duty_cycle() * 100.0;
+
     if (half_bridge_enabled() == false) {
 
         if (check_hs_mosfet_short()) {
@@ -275,6 +277,12 @@ __weak void Dcdc::control()
             stop_reason = "disabled";
         }
         else {
+            if (sweep_active) {
+                half_bridge_set_duty_cycle(sweep_value);
+                sweep_value -= 0.001;
+                if(sweep_value < 0.78) sweep_active = false;
+                return;
+            }
             if (mode == DCDC_MODE_BUCK || (mode == DCDC_MODE_AUTO && inductor_current > 0.1)) {
                 perturb_observe_buck();
             }
@@ -344,6 +352,12 @@ void Dcdc::test()
             startup_inhibit(true); // reset inhibit counter
         }
     }
+}
+
+void Dcdc::pwm_sweep() 
+{
+    sweep_value = 0.95;
+    sweep_active = true;
 }
 
 void Dcdc::stop()
